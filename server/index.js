@@ -44,10 +44,10 @@ app.use("/api", api);
 const port = process.env.PORT || 5000;
 
 // Serve production build
-app.use(express.static(path.join(__dirname, "../client/public/dist/")))
+app.use(express.static(path.join(__dirname, "../client/build/")))
 
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client/public/dist/index.html"));
+    res.sendFile(path.join(__dirname, "../client/build/index.html"));
 });
 
 app.listen(port, () =>

@@ -187,7 +187,7 @@ export default function FeedbackForm() {
                 <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 ">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                            MCG Fall 2025 Feedback Form
+                            MCG Fall 2025git remote remove origin Feedback Form
                         </h1>
                         <div><a href="/api/admin/candidate-spreadsheet" target="_blank" className="text-xs rounded-md border border-blue-600 p-2 hover:opacity-60">Download Applicant CSV</a></div>
                         <div><a href="/api/admin/feedback-spreadsheet" target="_blank" className="text-xs rounded-md border border-blue-600 p-2 hover:opacity-60">Download Feedback CSV</a></div>
