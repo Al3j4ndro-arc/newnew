@@ -1,0 +1,9 @@
+node_modules
+dist
+.idea
+.env
+.server/.env
+package-lock.json
+yarn.lock
+.idea/misc.xml
+.idea/misc.xml

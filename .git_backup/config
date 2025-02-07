@@ -1,0 +1,46 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	precomposeunicode = true
+[remote "origin"]
+	url = https://github.com/mitconsultinggroup/mcg-apply.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+	vscode-merge-base = origin/main
+[lfs]
+	repositoryformatversion = 0
+[branch "emma"]
+	remote = origin
+	merge = refs/heads/emma
+	vscode-merge-base = origin/emma
+[branch "spring-25"]
+	remote = origin
+	merge = refs/heads/spring-25
+[branch "emma2"]
+	remote = origin
+	merge = refs/heads/emma2
+	vscode-merge-base = origin/emma2
+[branch "old-version"]
+	vscode-merge-base = origin/main
+	remote = origin
+	merge = refs/heads/old-version
+[remote "heroku"]
+	url = https://git.heroku.com/applytomcg.git
+	fetch = +refs/heads/*:refs/remotes/heroku/*
+[branch "new-spring-25"]
+	remote = origin
+	merge = refs/heads/new-spring-25
+	vscode-merge-base = origin/new-spring-25
+[branch "new"]
+	vscode-merge-base = origin/main
+	vscode-merge-base = origin/main
+	remote = heroku
+	merge = refs/heads/main
+[remote "heroku-test"]
+	url = https://git.heroku.com/your-test-app-name.git
+	fetch = +refs/heads/*:refs/remotes/heroku-test/*

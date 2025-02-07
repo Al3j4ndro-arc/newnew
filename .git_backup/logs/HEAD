@@ -1,0 +1,34 @@
+0000000000000000000000000000000000000000 8a099ebb5868e1cbbe687ff97c44034a4778e4bf Alejandro <ale12@mit.edu> 1738761827 -0500	clone: from https://github.com/mitconsultinggroup/mcg-apply.git
+8a099ebb5868e1cbbe687ff97c44034a4778e4bf 5588d3aa92f97faa635fb9885de8146865849cb5 Alejandro <ale12@mit.edu> 1738762019 -0500	checkout: moving from main to emma
+5588d3aa92f97faa635fb9885de8146865849cb5 7d349324ccd0f21e41a163d1f45472bf103934cd Alejandro <ale12@mit.edu> 1738762038 -0500	checkout: moving from emma to spring-25
+7d349324ccd0f21e41a163d1f45472bf103934cd 514dde23e670ab73d473c4a8de076ee949d05b10 Alejandro <ale12@mit.edu> 1738762043 -0500	checkout: moving from spring-25 to emma2
+514dde23e670ab73d473c4a8de076ee949d05b10 5588d3aa92f97faa635fb9885de8146865849cb5 Alejandro <ale12@mit.edu> 1738762076 -0500	checkout: moving from emma2 to emma
+5588d3aa92f97faa635fb9885de8146865849cb5 e709f1346eee23e37a41c8fb628693e97132e1a2 Alejandro <ale12@mit.edu> 1738775226 -0500	commit: Update sass and Dockerfile
+e709f1346eee23e37a41c8fb628693e97132e1a2 8a099ebb5868e1cbbe687ff97c44034a4778e4bf Alejandro <ale12@mit.edu> 1738775230 -0500	checkout: moving from emma to main
+8a099ebb5868e1cbbe687ff97c44034a4778e4bf e309d0f21869480e0b75caeb87d79700532cc835 Alejandro <ale12@mit.edu> 1738775493 -0500	checkout: moving from main to e309d0f
+e309d0f21869480e0b75caeb87d79700532cc835 e309d0f21869480e0b75caeb87d79700532cc835 Alejandro <ale12@mit.edu> 1738775555 -0500	checkout: moving from e309d0f21869480e0b75caeb87d79700532cc835 to old-version
+e309d0f21869480e0b75caeb87d79700532cc835 0895022f030a2f20560fc6d3cddfbc30c5127daf Alejandro <ale12@mit.edu> 1738775939 -0500	commit: uncommented dist
+0895022f030a2f20560fc6d3cddfbc30c5127daf 85523e491b0987beab4601d490dae3fc12d85236 Alejandro <ale12@mit.edu> 1738776901 -0500	commit: Update from 2024 stuff to 2025
+85523e491b0987beab4601d490dae3fc12d85236 fd04f2df9b7ef742baab7c6f821c97c580f0d4c1 Alejandro <ale12@mit.edu> 1738777842 -0500	commit: feedback 2024 to 2025
+fd04f2df9b7ef742baab7c6f821c97c580f0d4c1 fd04f2df9b7ef742baab7c6f821c97c580f0d4c1 Alejandro <ale12@mit.edu> 1738818914 -0500	reset: moving to HEAD
+fd04f2df9b7ef742baab7c6f821c97c580f0d4c1 05048f9107c83916d1dc662bdf5d842dea149d72 Alejandro <ale12@mit.edu> 1738818914 -0500	checkout: moving from old-version to new-spring-25
+05048f9107c83916d1dc662bdf5d842dea149d72 950e9917eb560dcfbce208c466f5de678694c649 Alejandro <ale12@mit.edu> 1738819656 -0500	commit: uncommented dist
+950e9917eb560dcfbce208c466f5de678694c649 6d544f46a28a57717c3021e5dc1f841533bf12cd Alejandro <ale12@mit.edu> 1738820083 -0500	commit: Updated PublicEvents
+6d544f46a28a57717c3021e5dc1f841533bf12cd ef57ec18bf31f689401ef60f4d242bee4c79d789 Alejandro <ale12@mit.edu> 1738820205 -0500	commit: Test push
+ef57ec18bf31f689401ef60f4d242bee4c79d789 d9e908b2fc5cd5422b75d49dc72dac69d8b59aaa Alejandro <ale12@mit.edu> 1738820505 -0500	commit: Update Events
+d9e908b2fc5cd5422b75d49dc72dac69d8b59aaa e37001b1957f2ba8ca8e242e00585ba99c5bd400 Alejandro <ale12@mit.edu> 1738820633 -0500	commit: More Updates
+e37001b1957f2ba8ca8e242e00585ba99c5bd400 811b71baa7b6e1151c2cb7d5e062cb9735e0f01c Alejandro <ale12@mit.edu> 1738824463 -0500	checkout: moving from new-spring-25 to old-version
+811b71baa7b6e1151c2cb7d5e062cb9735e0f01c 6913d286aba0247e0d3d72123943e8831c856edd Alejandro <ale12@mit.edu> 1738825607 -0500	commit: Fix dependencies
+6913d286aba0247e0d3d72123943e8831c856edd 6913d286aba0247e0d3d72123943e8831c856edd Alejandro <ale12@mit.edu> 1738857914 -0500	reset: moving to HEAD
+6913d286aba0247e0d3d72123943e8831c856edd e709f1346eee23e37a41c8fb628693e97132e1a2 Alejandro <ale12@mit.edu> 1738857921 -0500	checkout: moving from old-version to emma
+e709f1346eee23e37a41c8fb628693e97132e1a2 6913d286aba0247e0d3d72123943e8831c856edd Alejandro <ale12@mit.edu> 1738858018 -0500	checkout: moving from emma to old-version
+6913d286aba0247e0d3d72123943e8831c856edd e309d0f21869480e0b75caeb87d79700532cc835 Alejandro <ale12@mit.edu> 1738858071 -0500	checkout: moving from old-version to testing
+e309d0f21869480e0b75caeb87d79700532cc835 3b03a0d2d3c38fd51217aa3ddb945d5bdd22f7a1 Alejandro <ale12@mit.edu> 1738858232 -0500	commit: Update .gitignore
+3b03a0d2d3c38fd51217aa3ddb945d5bdd22f7a1 28cce714bdfd5877a3ed3e091445df93472460bc Alejandro <ale12@mit.edu> 1738859102 -0500	commit: Add Procfile
+28cce714bdfd5877a3ed3e091445df93472460bc 34ea3d8f0a5d811f80e6926ebcefebd775dc6b65 Alejandro <ale12@mit.edu> 1738859246 -0500	commit: Fix: Install concurrently
+34ea3d8f0a5d811f80e6926ebcefebd775dc6b65 d9feaa1547e0041e7e3215b5685f54c9011cbbff Alejandro <ale12@mit.edu> 1738859641 -0500	commit: Update
+d9feaa1547e0041e7e3215b5685f54c9011cbbff 6517f3a85b13f494d8bc87b159c386f450512c15 Alejandro <ale12@mit.edu> 1738859711 -0500	commit: move package back
+6517f3a85b13f494d8bc87b159c386f450512c15 6913d286aba0247e0d3d72123943e8831c856edd Alejandro <ale12@mit.edu> 1738860255 -0500	checkout: moving from testing to old-version
+6913d286aba0247e0d3d72123943e8831c856edd 85523e491b0987beab4601d490dae3fc12d85236 Alejandro <ale12@mit.edu> 1738866097 -0500	checkout: moving from old-version to new
+85523e491b0987beab4601d490dae3fc12d85236 8e558a132c83864f8366f26ad866da16152944e9 Alejandro <ale12@mit.edu> 1738866464 -0500	commit: Delete package.json
+8e558a132c83864f8366f26ad866da16152944e9 5620af7626766ec2657373e47111713d911d0018 Alejandro <ale12@mit.edu> 1738871807 -0500	commit: 2024->2025

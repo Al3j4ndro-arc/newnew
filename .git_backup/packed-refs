@@ -1,0 +1,5 @@
+# pack-refs with: peeled fully-peeled sorted 
+5588d3aa92f97faa635fb9885de8146865849cb5 refs/remotes/origin/emma
+514dde23e670ab73d473c4a8de076ee949d05b10 refs/remotes/origin/emma2
+8a099ebb5868e1cbbe687ff97c44034a4778e4bf refs/remotes/origin/main
+7d349324ccd0f21e41a163d1f45472bf103934cd refs/remotes/origin/spring-25
