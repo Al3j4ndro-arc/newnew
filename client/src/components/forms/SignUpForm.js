@@ -7,6 +7,7 @@ export default function SignUpForm() {
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [profileImg, setProfileImg] = useState(null);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -18,6 +19,14 @@ export default function SignUpForm() {
       .match(
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       );
+  };
+
+  const handleProfileUpload = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setProfileImg(reader.result);
+    };
   };
 
   const submitSignup = () => {
@@ -46,9 +55,18 @@ export default function SignUpForm() {
       return;
     }
 
+    // Optionally ensure a headshot is attached:
+    if (!profileImg) {
+      setError("Please attach a headshot image");
+      return;
+    }
+
+    // Add your submission logic here.
+    // For example, send the form data including profileImg to your API.
+    // navigate("/someRoute");
 
     const url = "/api/auth/signup";
-    const data = { firstname, lastname, email, password };
+    const data = { firstname, lastname, email, password, profileImg };
     const options = {
       method: "POST",
       headers: {
@@ -58,18 +76,15 @@ export default function SignUpForm() {
       body: JSON.stringify(data),
     };
 
-    fetch(url, options)
-      .then((res) => {
-        if (res.ok) {
-          navigate("/events");
-        }
-        else {
-          res.json().then((data) => {
-            setError(data.message);
-          })
-        }
-      })
-
+    fetch(url, options).then((res) => {
+      if (res.ok) {
+        navigate("/events");
+      } else {
+        res.json().then((data) => {
+          setError(data.message);
+        });
+      }
+    });
   };
 
   return (
@@ -148,6 +163,32 @@ export default function SignUpForm() {
           }}
         />
       </div>
+
+      {/* New Headshot Upload Field */}
+      <div>
+        <label className="block mb-2 text-sm font-medium text-gray-900">
+          Profile Image
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-pointer"
+          onChange={(e) => {
+            setError("");
+            handleProfileUpload(e.target.files[0]);
+          }}
+        />
+        {profileImg && (
+          <div className="mt-2">
+            <img
+              src={profileImg}
+              alt="Profile Preview"
+              className="h-20 w-20 rounded-full object-cover"
+            />
+          </div>
+        )}
+      </div>
+
       <button
         onClick={submitSignup}
         className="text-sm h-10 px-5 text-white transition-colors duration-150 bg-red-700 rounded-lg focus:shadow-outline hover:bg-red-800"
