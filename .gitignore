@@ -1,9 +1,22 @@
-node_modules
-dist
-.idea
-.env
-.server/.env
-package-lock.json
+# dependencies
+node_modules/
 yarn.lock
-.idea/misc.xml
-.idea/misc.xml
+package-lock.json
+
+# build outputs
+client/public/dist/
+dist/
+
+# environment
+.env
+server/.env
+.env.*.local
+
+# IDE / OS junk
+.idea/
+*.iml
+.DS_Store
+
+# logs / coverage
+*.log
+coverage/
