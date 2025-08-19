@@ -1,31 +1,27 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import React from "react";
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 
-import LoginForm from '../components/forms/LoginForm';
+import LoginForm from "../components/forms/LoginForm.js";
 
 export default function Login() {
-  const navigate = useNavigate();
+  const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/me', {
-      method: 'GET',
+    fetch("/api/me", {
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      credentials: 'include',
+      credentials: "include",
     }).then((res) => {
       if (res.ok) {
-        navigate('/events');
+        history.push('/events');
       }
       setIsLoading(false);
     });
-  }, [navigate]);
+  }, [history]);
 
-  return (
-    <div>
-      {isLoading ? <div></div> : <LoginForm />}
-    </div>
-  );
+  return <div>{isLoading ? <div></div> : <LoginForm />}</div>;
 }

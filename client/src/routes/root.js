@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '../components/headers/Header';
+import Header from '../components/headers/Header.js';
 
 export default function Root() {
   return (

@@ -11,6 +11,8 @@ const path = require("path");
 
 const here = p => path.join(__dirname, p);
 
+const ROOT_NODE_MODULES = path.resolve(__dirname, "../node_modules");
+
 /*
  * Entry
  */
@@ -99,22 +101,48 @@ var configObject = {
     mode: env,
     entry,
     devServer: {
+        port: 3000,                 // <-- add
+        hot: true,                  // <-- add
+        historyApiFallback: true,
         proxy: {
-            '/api': 'http://localhost:5000',
+            "/api": "http://localhost:3001",  // <-- was 5000, change to 3001
             secure: false
+        }
         },
-        historyApiFallback: true
-    },
     devtool: "inline-cheap-module-source-map",
     output,
     resolveLoader: {
-        modules: [here("/node_modules")]
-    },
+        modules: ['node_modules', path.resolve(__dirname, '../node_modules')],
+        },
     module: modules,
     plugins
 };
 
+
 module.exports = (env, argv) => {
-    configObject.mode = argv.mode;
-    return configObject;
+  const configObject = {
+    mode: env,
+    entry,
+    devServer: { /* your existing */ },
+    devtool: "inline-cheap-module-source-map",
+    output,
+
+    // 👇 let webpack find loaders at the repo root too
+    resolveLoader: {
+      modules: ["node_modules", ROOT_NODE_MODULES],
+    },
+
+    // 👇 optional but helpful for imports, keeps your earlier fullySpecified tweak
+    resolve: {
+      modules: [ "node_modules", ROOT_NODE_MODULES ],
+      extensions: [".js", ".jsx"],
+      fullySpecified: false,
+    },
+
+    module: modules,
+    plugins,
+  };
+
+  configObject.mode = argv.mode;
+  return configObject;
 };

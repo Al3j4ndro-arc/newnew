@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import FeedbackRow from './FeedbackRow';
-import Bar from './Bar';
+import FeedbackRow from './FeedbackRow.js';
+import Bar from './Bar.js';
 
 const FeedbackCard = ({ feedback }) => {
     const [selectedComment, setSelectedComment] = useState(null);
@@ -56,7 +56,7 @@ const FeedbackCard = ({ feedback }) => {
                     <FeedbackRow comment={comment}/>
                 </div>
             ))}
-        
+
         </div>):
         <div className="p-2 w-full">
             {selectedComment && (

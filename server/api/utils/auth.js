@@ -31,70 +31,65 @@ const hasRequiredSignup = (req) => {
   return true;
 };
 
+// --- replace your /signup handler with this ---
 router.post("/signup", async (req, res) => {
   if (!hasRequiredSignup(req)) {
-    res.status(400).json({
-      message: "missing required fields",
-    });
-    return;
+    return res.status(400).json({ message: "missing required fields" });
   }
 
-  const { firstname, lastname, email, password, feedback } = req.body;
+  const { firstname, lastname, email, password } = req.body;
 
-  let existingUser = await User.findOne({ email: req.body.email });
+  // 1) reject duplicate
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
-    res.status(409).json({
-      message: "email already signed up. Please contact emmachen@mit.edu if you think this is a mistake",
+    return res.status(409).json({
+      message:
+        "email already signed up. Please contact emmachen@mit.edu if you think this is a mistake",
     });
-    return;
   }
 
-  var salt = await bcrypt.genSalt(10);
-  var savedPassword = await bcrypt.hash(password, salt);
+  try {
+    // 2) hash password
+    const salt = await bcrypt.genSalt(10);
+    const savedPassword = await bcrypt.hash(password, salt);
 
-  const newUser = new User({
-    userid: uuid(),
-    firstname: firstname,
-    lastname: lastname,
-    email: email,
-    password: savedPassword,
-    usertype: "candidate",
-    userData: {
-      feedback: [],
-      events: {},
-      application: {},
-    },
-    decision: "pending",
-    conflict: [],
-  });
-
-  newUser
-    .save()
-    .then((saved) => {
-      const token = jwt.sign(
-        {
-          userid: saved.userid,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: process.env.JWT_EXPIRES_IN,
-        }
-      );
-
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: true,
-      });
-      res.status(200).json({
-        message: "user created",
-      });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message: "error creating user",
-      });
+    // 3) create in Dynamo (no `new` and no `.save()`)
+    // in server/api/utils/auth.js inside the create call:
+    const saved = await User.create({
+      userid: v4(),
+      firstname,
+      lastname,
+      email,
+      password: savedPassword,
+      usertype: "candidate",
+      userData: {
+        feedback: [],
+        events: {},
+        application: {},
+        headshotUrl: req.body.headshotUrl || null,   // <--- store here
+      },
+      decision: "pending",
+      conflict: [],
     });
+
+    // 4) issue JWT
+    const token = jwt.sign(
+      { userid: saved.userid },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,   // set to true when you put HTTPS in front
+      sameSite: true,
+    });
+
+    return res.status(200).json({ message: "user created" });
+  } catch (err) {
+    console.error("signup error:", err);
+    return res.status(500).json({ message: "error creating user" });
+  }
 });
 
 router.post("/login", async (req, res) => {

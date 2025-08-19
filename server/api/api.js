@@ -6,11 +6,15 @@ import me from "./me.js";
 import admin from "./admin.js";
 import feedback from "./member/feedback.js";
 import conflict from "./member/conflict.js";
+import uploads from "./uploads.js";
 
 const router = express.Router();
 
 // User authentication (signup, login, logout)
 router.use("/auth", auth);
+
+// Upload headshots
+router.use("/uploads", uploads);
 
 // Event routes (sign into event)
 router.use("/events", events);

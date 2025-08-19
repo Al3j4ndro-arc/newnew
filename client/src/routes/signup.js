@@ -1,9 +1,9 @@
 import React from "react";
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 
-import SignUpForm from "../components/forms/SignUpForm";
-import PublicHeader from "../components/headers/PublicHeader";
+import SignUpForm from "../components/forms/SignUpForm.js";
+import PublicHeader from "../components/headers/PublicHeader.js";
 
 export default function SignUp() {
   return (

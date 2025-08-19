@@ -1,6 +1,6 @@
 import express from "express";
 
-import { User } from "../../db/user";
+import { User } from "../../db/user.js";
 import verifyToken from "../utils/token.js";
 
 const router = express.Router();

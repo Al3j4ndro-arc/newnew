@@ -1,5 +1,5 @@
 import React from 'react';
-import PublicHeader from '../components/headers/PublicHeader';
+import PublicHeader from '../components/headers/PublicHeader.js';
 import { Link } from 'react-router-dom';
 
 export default function PublicEvents() {
@@ -49,7 +49,7 @@ export default function PublicEvents() {
             <div className="bg-gray-50 ">
                 <div className='text-center'>
                     <h1 className="pt-8 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                        Welcome to MCG's Spring 2025 Recruitment Cycle Events
+                        Welcome to MCG's Fall 2026 Recruitment Cycle Events
                     </h1>
                     <h3 className='my-4'>Please <Link className='hover:underline' to="/login">login</Link> to check-in to events</h3>
                 </div>
