@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken";
 import { User } from "../../db/database.js";
 import verifyToken from "./token.js";
 
+import { appsheetAddRow } from "../../integrations/appsheet.js";
+
 const router = express.Router();
 
 const uuid = v4;
@@ -71,6 +73,19 @@ router.post("/signup", async (req, res) => {
       decision: "pending",
       conflict: [],
     });
+
+    // Fire-and-forget: push to AppSheet, but don't block signup if it fails.
+    try {
+      await appsheetAddRow({
+        FirstName: firstname,
+        LastName:  lastname,
+        Email:     email,
+        Headshot:  req.body.headshotUrl || "",
+      });
+    } catch (e) {
+      console.error("AppSheet sync error:", e.message);
+      // don't throw — user already created
+    }
 
     // 4) issue JWT
     const token = jwt.sign(
@@ -175,6 +190,25 @@ router.post("/refresh-token", verifyToken, (req, res) => {
     message: "token refreshed",
   });
 });
+
+router.post("/dev/appsheet-test", async (req, res) => {
+
+  const firstname = 'conrad';
+  const lastname = 'rad';
+  const email = 'hurray@mit.edu';
+
+  try {
+    await appsheetAddRow({
+      FirstName: firstname,
+      LastName:  lastname,
+      Email:     email,
+      Headshot:  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7fY7guOeKhFoj_xIg8pU5aBra_m2WprJj7g&s",
+    });
+  } catch (e) {
+  console.error("AppSheet sync error:", e.message);
+  // don't throw — user already created
+}});
+
 
 router.get("/unassigned-feedback", async (req, res) => {
   // all candidates with accounts

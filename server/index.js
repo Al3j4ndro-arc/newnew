@@ -60,6 +60,9 @@ app.use("/api", api);
 
 // Static + SPA catch-all
 app.use(express.static(path.join(__dirname, "../client/public/dist")));
+// server.js
+app.use(express.static(path.join(__dirname, "client/public")));
+
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/public/dist/index.html"));
 });
