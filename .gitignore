@@ -20,3 +20,5 @@ server/.env
 # logs / coverage
 *.log
 coverage/
+server/creds/
+.env
