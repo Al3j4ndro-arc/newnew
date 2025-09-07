@@ -12,7 +12,7 @@ export default function Login() {
   useEffect(() => {
     let alive = true;
     const controller = new AbortController();
-    q45
+    
     (async () => {
       try {
         await api("/me", { signal: controller.signal }); // will include cookies
