@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 
 import Header from "../components/headers/Header.js";
 import ConflictForm from "../components/forms/ConflictForm.js";
-import { api } from "/Users/alejandrovillanueva/mcg-apply/client/src/lib/api.js"; // adjust path if needed
+import { api } from "../lib/api.js";
 
 export default function ConflictRoute() {
   const [loading, setLoading] = useState(true);

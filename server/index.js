@@ -11,7 +11,7 @@ import uploads from "./api/uploads.js";
 import authRouter from "./api/utils/auth.js";   // ✅ server auth routes
 import api from "./api/api.js";                 // your other API routes
 
-dotenv.config();
+dotenv.config({ path: process.env.ENV_FILE || "/etc/mcg/.env" });
 const app = express();
 
 app.use(express.json({ limit: "30mb" }));

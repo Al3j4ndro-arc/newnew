@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import validator from "validator";
 // ⬇️ from components/forms -> lib
-import { api } from "/Users/alejandrovillanueva/mcg-apply/client/src/lib/api.js";
+import { api } from "../../lib/api.js";
 
 export default function EventCheckInForm({ event }) {
   const { id, name, timelocation, description } = event;

@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 
 import Header from "../components/headers/Header.js";
 import AdminPanel from "../components/forms/AdminForm.js";
-import { api } from "/Users/alejandrovillanueva/mcg-apply/client/src/lib/api.js"; // <— adjust path if needed
+import { api } from "../lib/api.js";
 
 export default function Admin() {
   const [loading, setLoading] = useState(true);

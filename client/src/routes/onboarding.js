@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import OnboardingFlow from "../components/OnboardingFlow.jsx";
-import { api } from "/Users/alejandrovillanueva/mcg-apply/client/src/lib/api.js"; // ← helper that includes credentials: "include"
+import { api } from "../lib/api.js";
 
 export default function Onboarding() {
   const history = useHistory();

@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 
 import Header from "../components/headers/Header.js";
 import ApplicationForm from "../components/forms/ApplicationForm.js";
-import { api } from "/Users/alejandrovillanueva/mcg-apply/client/src/lib/api.js"; // make sure the path matches your project
+import { api } from "../lib/api.js";
 
 export default function Application() {
   const [loading, setLoading] = useState(true);

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import LoginForm from "../components/forms/LoginForm.js";
-import { api } from "/Users/alejandrovillanueva/mcg-apply/client/src/lib/api.js"; // helper that sends credentials
+import { api } from "../lib/api.js";
 
 export default function Login() {
   const history = useHistory();
@@ -12,7 +12,7 @@ export default function Login() {
   useEffect(() => {
     let alive = true;
     const controller = new AbortController();
-
+    q45
     (async () => {
       try {
         await api("/me", { signal: controller.signal }); // will include cookies

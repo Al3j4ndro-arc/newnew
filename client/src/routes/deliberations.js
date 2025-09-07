@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 
 import Header from "../components/headers/Header.js";
 import DeliberationsForm from "../components/forms/DeliberationsForm.js";
-import { api } from "/Users/alejandrovillanueva/mcg-apply/client/src/lib/api.js"; // adjust the path if needed
+import { api } from "../lib/api.js";
 
 export default function Deliberations() {
   const [loading, setLoading] = useState(true);

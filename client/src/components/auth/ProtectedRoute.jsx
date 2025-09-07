@@ -1,7 +1,7 @@
 // client/src/components/auth/ProtectedRoute.jsx
 import React, { useEffect, useState } from "react";
 import { Route, Redirect } from "react-router-dom";
-import { api } from "/Users/alejandrovillanueva/mcg-apply/client/src/lib/api.js";
+import { api } from "../../lib/api.js";
 
 export default function ProtectedRoute({ component: Component, ...rest }) {
   const [loading, setLoading] = useState(true);

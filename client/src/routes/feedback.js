@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 
 import Header from "../components/headers/Header.js";
 import FeedbackForm from "../components/forms/FeedbackForm.js";
-import { api } from "/Users/alejandrovillanueva/mcg-apply/client/src/lib/api.js"; // helper that adds credentials: "include"
+import { api } from "../lib/api.js";
 
 export default function Feedback() {
   const [loading, setLoading] = useState(true);
