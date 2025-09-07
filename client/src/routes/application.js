@@ -1,41 +1,53 @@
-import React from "react";
-import { useEffect, useState } from "react";
+// client/src/routes/Application.js
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import Header from "../components/headers/Header.js";
 import ApplicationForm from "../components/forms/ApplicationForm.js";
+import { api } from "/Users/alejandrovillanueva/mcg-apply/client/src/lib/api.js"; // make sure the path matches your project
 
 export default function Application() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState({});
-
+  const [loading, setLoading] = useState(true);
+  const [me, setMe] = useState(null);
   const history = useHistory();
 
   useEffect(() => {
-    fetch("/api/me").then((response) => {
-      if (response.ok) {
-        response.json().then((data) => {
-          setUserData(data.data);
-          setIsLoading(false);
-        });
-      } else {
-        history.push('/login');
-      }
-    });
-  }, [navigate]);
+    let alive = true;
+    const controller = new AbortController();
 
-  return isLoading ? (
-    <div></div>
-  ) : (
+    (async () => {
+      try {
+        const res = await api("/me", { signal: controller.signal }); // sends cookies
+        if (!alive) return;
+        setMe(res.data);
+      } catch {
+        if (alive) history.push("/login");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+
+    return () => {
+      alive = false;
+      controller.abort();
+    };
+  }, [history]);
+
+  if (loading) return null;
+
+  return (
     <div className="bg-gray-50">
-      <div>
-        <Header firstname={userData.firstname} usertype={userData.usertype} />
-      </div>
-      <div className="flex flex-col items-center justify-center py-8 ">
-        <div className="w-full bg-white rounded-lg shadow  md:mt-0 sm:max-w-2xl lg:max-w-4xl xl:p-0 ">
+      <Header
+        firstname={me.firstname}
+        usertype={me.usertype}
+        headshot={me.headshot}          // now supports internal or google URL
+      />
+
+      <div className="flex flex-col items-center justify-center py-8">
+        <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-2xl lg:max-w-4xl xl:p-0">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-              MCG Spring 2025 Application
+              MCG Fall 2025 Application
             </h1>
             <ApplicationForm />
           </div>

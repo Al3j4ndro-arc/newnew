@@ -7,6 +7,8 @@ import admin from "./admin.js";
 import feedback from "./member/feedback.js";
 import conflict from "./member/conflict.js";
 import uploads from "./uploads.js";
+import dev from "./dev/config.js";
+import devSheets from "./dev/sheets.js";
 
 const router = express.Router();
 
@@ -15,6 +17,12 @@ router.use("/auth", auth);
 
 // Upload headshots
 router.use("/uploads", uploads);
+
+// Mount dev tools (only in non-prod)
+if (process.env.NODE_ENV !== "production") {
+  router.use("/dev", dev);
+  router.use("/dev", devSheets);
+}
 
 // Event routes (sign into event)
 router.use("/events", events);

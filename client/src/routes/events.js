@@ -1,38 +1,56 @@
+// client/src/routes/Events.js
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import Header from "../components/headers/Header.js";
 import EventsForm from "../components/forms/EventsForm.js";
+import { api } from "../lib/api.js"; // adjust path if needed
 
 export default function Events() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState({ firstname: "" });
-
+  const [loading, setLoading] = useState(true);
+  const [me, setMe] = useState(null);
   const history = useHistory();
 
   useEffect(() => {
-    fetch("/api/me").then((response) => {
-      if (response.ok) {
-        response.json().then((data) => {
-          setUserData(data.data);
-          setIsLoading(false);
-        });
-      } else {
-        history.push("/login"); // v5 syntax
-      }
-    });
-  }, [history]); // 👈 use history as the dependency
+    let alive = true;
+    const controller = new AbortController();
 
-  return isLoading ? (
-    <div></div>
-  ) : (
+    (async () => {
+      try {
+        const res = await api("/me", { signal: controller.signal }); // sends cookies
+        if (!alive) return;
+        if (!res?.data?.classYear) {
+         history.push("/profile?first=1");
+         return;
+       }
+       setMe(res.data);
+      } catch {
+        if (alive) history.push("/login");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+
+    return () => {
+      alive = false;
+      controller.abort();
+    };
+  }, [history]);
+
+  if (loading) return null;
+
+  return (
     <div>
-      <Header firstname={userData.firstname} usertype={userData.usertype} />
+      <Header
+        firstname={me.firstname}
+        usertype={me.usertype}
+        headshot={me.headshot}
+      />
       <div className="bg-gray-50 pb-6">
         <h1 className="pt-8 mb-8 text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-          Welcome to MCG's Fall 2026 Recruitment Cycle Events
+          Welcome to MCG&apos;s Fall 2025 Recruitment Cycle Events
         </h1>
-        <EventsForm usertype={userData.usertype} />
+        <EventsForm usertype={me.usertype} />
       </div>
     </div>
   );

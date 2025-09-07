@@ -1,8 +1,11 @@
 // client/webpack.config.js
 const path = require("path");
 const webpack = require("webpack");
+const dotenv = require("dotenv");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+dotenv.config(); // load .env from project root
 
 const here = p => path.join(__dirname, p);
 const ROOT_NODE_MODULES = path.resolve(__dirname, "../node_modules");
@@ -13,6 +16,7 @@ const modules = {
   rules: [
     {
       test: /\.js$/,
+      test: /\.(js|jsx)$/,         // ⬅️ handle .jsx too
       exclude: /node_modules/,
       use: {
         loader: "babel-loader",
@@ -54,7 +58,11 @@ const plugins = [
   new HtmlWebpackPlugin({
     template: here("/public/index.html"),
     favicon: here("/public/favicon.ico")
-  })
+  }),
+  new webpack.DefinePlugin({
+    "process.env.GOOGLE_CLIENT_ID": JSON.stringify(process.env.GOOGLE_CLIENT_ID || ""),
+    "process.env.CDN_DOMAIN": JSON.stringify(process.env.CDN_DOMAIN || ""),
+  }),
 ];
 
 // ⬇️ define ONE devServer object and use it in the export

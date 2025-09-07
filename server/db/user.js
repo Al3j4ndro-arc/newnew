@@ -19,6 +19,10 @@ export const User = {
       userid: doc.userid, firstname: doc.firstname, lastname: doc.lastname,
       email: doc.email, password: doc.password, usertype: doc.usertype,
       userData: doc.userData ?? null, decision: doc.decision, conflict: doc.conflict ?? [],
+      // ⬇️ keep optional auth/profile fields
+      headshotUrl: doc.headshotUrl ?? null,
+      googleId: doc.googleId ?? null,
+      internalHeadshotUrl: doc.internalHeadshotUrl ?? null,
       gsi1pk: "USER#EMAIL", gsi1sk: doc.email,
       updatedAt: Date.now(), createdAt: Date.now(),
     };
@@ -48,18 +52,67 @@ export const User = {
     const userid = filter?.userid || filter?._id;
     if (!userid) throw new Error("User.updateOne requires { userid }");
     const sets = update?.$set ?? update ?? {};
-    const names = {}, values = {}; const parts = [];
-    let i = 0; for (const [k, v] of Object.entries(sets)) {
-      const nk = `#k${i}`, nv = `:v${i}`; names[nk] = k; values[nv] = v; parts.push(`${nk} = ${nv}`); i++;
+    if (!Object.keys(sets).length) {
+      return { acknowledged: true, modifiedCount: 0 };
     }
-    names["#updatedAt"] = "updatedAt"; values[":updatedAt"] = Date.now(); parts.push("#updatedAt = :updatedAt");
+    const names = {}, values = {};
+    const parts = [];
+    let i = 0;
+
+    const entries = Object.entries(sets).filter(([, v]) => v !== undefined);
+    for (const [k, v] of entries) {
+      const path = k.split('.').map((seg, j) => {
+        const nk = `#k${i}_${j}`;
+        names[nk] = seg;
+        return nk;
+      }).join('.');
+      const nv = `:v${i}`;
+      values[nv] = v;
+      parts.push(`${path} = ${nv}`);
+      i++;
+    }
+
+    names["#updatedAt"] = "updatedAt";
+    values[":updatedAt"] = Date.now();
+    parts.push("#updatedAt = :updatedAt");
     await ddb.send(new UpdateCommand({
-      TableName: TABLE, Key: { pk: pkUser(userid), sk: SK_PROFILE },
+      TableName: TABLE,
+      Key: { pk: pkUser(userid), sk: SK_PROFILE },
       UpdateExpression: `SET ${parts.join(", ")}`,
-      ExpressionAttributeNames: names, ExpressionAttributeValues: values,
+      ExpressionAttributeNames: names,
+      ExpressionAttributeValues: values,
+      ReturnValues: "UPDATED_NEW", // optional
     }));
     return { acknowledged: true, modifiedCount: 1 };
     },
+    // --- add: simple wrapper used by auth.js
+  async update(filter, sets) {
+    // supports both (filter, {$set:{...}}) and (filter, {...})
+    const u = sets?.$set ? sets : { $set: sets };
+    return this.updateOne(filter, u);
+  },
+  // --- add: mongoose-style alias (auth.js checks for this)
+  async findOneAndUpdate(filter, update, opts = {}) {
+    await this.updateOne(filter, update);
+    // return updated doc when requested (new / returnDocument: "after")
+    if (opts.new === true || opts.returnDocument === "after") {
+      return this.findOne(filter);
+    }
+    return null;
+  },
+  // --- add: full overwrite/upsert (auth.js last fallback)
+  async put(item) {
+    if (!item?.userid) throw new Error("User.put requires userid");
+    const full = {
+      ...item,
+      pk: pkUser(item.userid),
+      sk: SK_PROFILE,
+      updatedAt: Date.now(),
+      createdAt: item.createdAt ?? Date.now(),
+    };
+    await ddb.send(new PutCommand({ TableName: TABLE, Item: full }));
+    return full;
+  },
   async deleteOne(filter) {
     const userid = filter?.userid || filter?._id;
     if (!userid) throw new Error("User.deleteOne requires { userid }");
@@ -68,4 +121,5 @@ export const User = {
     }));
     return { acknowledged: true, deletedCount: 1 };
   },
+
 };

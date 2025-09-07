@@ -76,12 +76,12 @@ export default function PNMProfile({ pnm, index, status }) {
       </div>
       <div className="col-span-2">{pnm.email}</div>
       <div className="col-span-1">{classYear}</div>
-      <div className="col-span-1">{events.meettheteam ? "Yes" : "-"}</div>
-      <div className="col-span-1">{events.pdpanel ? "Yes" : "-"}</div>
-      <div className="col-span-1">{events.deipanel ? "Yes" : "-"}</div>
-      <div className="col-span-1">{events.resumereview ? "Yes" : "-"}</div>
-      <div className="col-span-1">{events.cheesecakesocial ? "Yes" : "-"}</div>
-      <div className="col-span-1">{events.caseworkshop ? "Yes" : "-"}</div>
+      <div className="col-span-1">{events.hellomcg ? "Yes" : "-"}</div>
+      <div className="col-span-1">{events.careerday ? "Yes" : "-"}</div>
+      <div className="col-span-1">{events.allvoices ? "Yes" : "-"}</div>
+      <div className="col-span-1">{events.resume_glowup ? "Yes" : "-"}</div>
+      <div className="col-span-1">{events.dessert ? "Yes" : "-"}</div>
+      <div className="col-span-1">{events.caseprep ? "Yes" : "-"}</div>
       <div className="col-span-1">{pnm.userData.feedback.length}</div>
     </div>
   );

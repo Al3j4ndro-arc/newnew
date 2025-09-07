@@ -1,39 +1,53 @@
-import React from "react";
-import { useEffect, useState } from "react";
+// client/src/routes/Deliberations.js
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import Header from "../components/headers/Header.js";
 import DeliberationsForm from "../components/forms/DeliberationsForm.js";
+import { api } from "/Users/alejandrovillanueva/mcg-apply/client/src/lib/api.js"; // adjust the path if needed
 
 export default function Deliberations() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState({ firstname: "" });
-
+  const [loading, setLoading] = useState(true);
+  const [me, setMe] = useState(null);
   const history = useHistory();
 
   useEffect(() => {
-    fetch("/api/me").then((response) => {
-      if (response.ok) {
-        response.json().then((data) => {
-          if (data.data.usertype !== "admin") {
-            history.push('/login');
-          } else {
-            setUserData(data.data);
-            setIsLoading(false);
-          }
-        });
-      } else {
-        history.push('/login');
+    let alive = true;
+    const controller = new AbortController();
+
+    (async () => {
+      try {
+        const res = await api("/me", { signal: controller.signal }); // sends cookies
+        if (!alive) return;
+
+        if (res?.data?.usertype !== "admin") {
+          history.push("/login");
+          return;
+        }
+
+        setMe(res.data);
+      } catch {
+        history.push("/login");
+      } finally {
+        if (alive) setLoading(false);
       }
-    });
-  }, [navigate]);
-  return isLoading ? (
-    <div></div>
-  ) : (
+    })();
+
+    return () => {
+      alive = false;
+      controller.abort();
+    };
+  }, [history]);
+
+  if (loading) return null;
+
+  return (
     <div>
-      <div>
-        <Header firstname={userData.firstname} usertype={userData.usertype} />
-      </div>
+      <Header
+        firstname={me.firstname}
+        usertype={me.usertype}
+        headshot={me.headshot}
+      />
       <div className="mx-8 my-8">
         <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
           Deliberations Control Panel

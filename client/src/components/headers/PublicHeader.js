@@ -1,5 +1,5 @@
 import React from 'react';
-// import Logo from "../../assets/logos/mcg-long-logo-noback.png"
+import Logo from "../../assets/logos/mcg-long-logo-noback.png"
 import { Link } from "react-router-dom"
 import { useState } from 'react';
 
@@ -10,7 +10,7 @@ export default function PublicHeader() {
       <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
         <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
           <a href="https://mitconsulting.group/" className="flex items-center">
-            {/* <img src={Logo} className="h-8 mr-3" alt="MCG Logo" /> */}
+            <img src={Logo} className="h-8 mr-3" alt="MCG Logo" />
           </a>
           <button
             className="text-white cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"

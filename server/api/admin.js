@@ -5,6 +5,8 @@ const router = express.Router();
 import { Config, User } from "../db/database.js";
 import verifyToken from "./utils/token.js";
 
+import { appsheetUpdateRow } from "../integrations/appsheet.js"; // add this at top with your other imports
+
 const isAdminMiddleware = (req, res, next) => {
     if (req.user.usertype != "admin") {
         res.status(401).json({
@@ -19,50 +21,20 @@ router.use(verifyToken);
 router.use(isAdminMiddleware);
 
 router.post("/set-event-code", async (req, res) => {
-    if (!req.body.eventName || !req.body.eventCode) {
-        res.status(400).json({
-            message: "missing required fields",
-        });
-        return;
-    }
-    let config = await Config.findOne({
-        configType: "eventCodes",
-    });
-    if (!config) {
-        const newConfig = new Config({
-            configType: "eventCodes",
-        });
-        newConfig.configData = {};
-        newConfig.configData[req.body.eventName] = req.body.eventCode;
-        newConfig.markModified("configData");
-        newConfig
-            .save()
-            .then(() => {
-                res.status(200).json({
-                    message: "event code saved to database",
-                });
-            })
-            .catch((err) => {
-                res.status(500).json({
-                    message: "error saving event code to database",
-                });
-            });
-    } else {
-        config.configData[req.body.eventName] = req.body.eventCode;
-        config.markModified("configData");
-        config
-            .save()
-            .then(() => {
-                res.status(200).json({
-                    message: "event code saved to database",
-                });
-            })
-            .catch((err) => {
-                res.status(500).json({
-                    message: "error saving event code to database",
-                });
-            });
-    }
+  const { eventName, eventCode } = req.body || {};
+  if (!eventName || !eventCode) {
+    return res.status(400).json({ message: "missing required fields" });
+  }
+
+  const current = await Config.findOne();
+  const nextCodes = { ...(current?.configData || {}), [eventName]: eventCode };
+
+  await Config.upsert({
+    configType: "eventCodes",
+    configData: nextCodes,
+  });
+
+  return res.status(200).json({ message: "event code saved to database" });
 });
 
 router.post("/set-decision", async (req, res) => {
@@ -91,27 +63,11 @@ router.post("/set-decision", async (req, res) => {
 });
 
 router.get("/get-event-codes", async (req, res) => {
-    Config.findOne({
-        configType: "eventCodes",
-    })
-        .then((config) => {
-            if (!config) {
-                res.status(200).json({
-                    message: "no event codes in database",
-                    eventCodes: {},
-                });
-            } else {
-                res.status(200).json({
-                    message: "event codes found in database",
-                    eventCodes: config.configData,
-                });
-            }
-        })
-        .catch((err) => {
-            res.status(500).json({
-                message: "error finding event codes in database",
-            });
-        });
+  const cfg = await Config.findOne();
+  return res.status(200).json({
+    message: cfg ? "event codes found in database" : "no event codes in database",
+    eventCodes: cfg?.configData || {},
+  });
 });
 
 router.get("/view-all-candidates", async (req, res) => {
@@ -286,7 +242,7 @@ router.get("/candidate-spreadsheet", async (req, res) => {
                         events = candidate.userData.events;
                     }
                     csv += candidate.firstname + "," + candidate.lastname + "," + candidate.email + "," + classYear + ",";
-                    csv += (events.meettheteam ? "Yes" : "No") + "," + (events.pdpanel ? "Yes" : "No") + "," + (events.deipanel ? "Yes" : "No") + "," + (events.resumereview ? "Yes" : "No") + "," + (events.cheesecakesocial ? "Yes" : "No") + "," + (events.caseworkshop ? "Yes" : "No") + ",";
+                    csv += (events.hellomcg ? "Yes" : "No") + "," + (events.careerday ? "Yes" : "No") + "," + (events.allvoices ? "Yes" : "No") + "," + (events.resume_glowup ? "Yes" : "No") + "," + (events.dessert ? "Yes" : "No") + "," + (events.caseprep ? "Yes" : "No") + ",";
                     csv += `https://apply.mitconsulting.group/api/admin/candidate-resume/${candidate.email}` + "," + `https://apply.mitconsulting.group/api/admin/candidate-profile-img/${candidate.email}` + ",";
                     // csv += candidate.userData.application.opt1.replaceAll(",", "-").replaceAll("\n", "") + "," + candidate.userData.application.opt2.replaceAll(",", "-").replaceAll("\n", "") + ",";
                     csv += "\n";
@@ -336,6 +292,67 @@ router.get("/feedback-spreadsheet", async (req, res) => {
         });
 });
 
+// read current config
+router.get("/config", verifyToken, async (req, res) => {
+  // (optional) enforce admin: if (req.user.usertype !== "admin") return res.sendStatus(403);
+  const cfg = await Config.findOne();
+  res.json(cfg || {});
+});
 
+// upsert event codes
+router.post("/event-codes", verifyToken, async (req, res) => {
+  // (optional) enforce admin: if (req.user.usertype !== "admin") return res.sendStatus(403);
+  const { codes } = req.body || {};
+  if (!codes || typeof codes !== "object") return res.status(400).json({ message: "missing codes" });
+  const item = await Config.upsert({ configType: "eventCodes", configData: codes });
+  res.json({ ok: true, item });
+});
+
+router.post("/fix-user-events", verifyToken, isAdminMiddleware, async (req, res) => {
+  try {
+    const { email, userid, fromKey, toKey } = req.body || {};
+    if (!(email || userid) || !fromKey || !toKey) {
+      return res.status(400).json({ message: "missing fields: email|userid, fromKey, toKey" });
+    }
+
+    const user =
+      email ? await User.findOne({ email }) : await User.findById(userid);
+
+    if (!user) return res.status(404).json({ message: "user not found" });
+
+    const events = { ...(user.userData?.events || {}) };
+
+    if (!events[fromKey]) {
+      return res.json({ message: "no-op (fromKey not present)", userid: user.userid, events });
+    }
+
+    // rename key
+    events[toKey] = true;
+    delete events[fromKey];
+
+    await User.updateOne(
+      { userid: user.userid },
+      { $set: { "userData.events": events } }
+    );
+
+    // keep AppSheet in sync
+    try {
+      const list = Object.keys(events).sort().join(", ");
+      const count = Object.keys(events).length;
+      await appsheetUpdateRow({
+        Email: user.email,
+        EventsAttended: list,
+        NumEventsAttended: count,
+      });
+    } catch (e) {
+      console.warn("[AppSheet sync] failed:", e?.message || e);
+    }
+
+    return res.json({ message: "fixed", userid: user.userid, events });
+  } catch (e) {
+    console.error("[fix-user-events] error:", e);
+    return res.status(500).json({ message: "internal error" });
+  }
+});
 
 export default router;

@@ -8,42 +8,42 @@ export default function EventsForm(usertype) {
 
   const events = [
     {
-      id: "meettheteam",
+      id: "hellomcg",
       name: "Meet the Team",
       timelocation: "7:30 - 9pm | Monday 9/8 | Room W20-201",
       description:
         "Meet current members of MCG and learn more about MCG's recruitment process during our first recruitment event of the semester.",
     },
     {
-      id: "pdpanel",
-      name: "Career Day",
+      id: "careerday",
+      name: "Prof Dev Social",
       timelocation: "7:30 - 9pm | Tuesday 9/9 | Room 2-131",
       description:
         "Hear from current members about their professional experiences in various industries and the role MCG has played in developing their careers.",
     },
     {
-      id: "deipanel",
+      id: "allvoices",
       name: "DEI Panel",
       timelocation: "7:30 - 9pm | Wednesday 9/10 | Room 2-190",
       description:
         "Hear from current women and BIPOC within MCG about their professional experiences and MCG's efforts to create a more inclusive environment.",
     },
     {
-      id: "resumereview",
+      id: "resume_glowup",
       name: "Resume Review",
       timelocation: " 7:30 - 9pm | Thursday 9/11 | Room 2-190",
       description:
         "Come work on your resume with the help of current MCG consultants who have landed offers at top consulting, finance, and tech companies.",
     },
     {
-      id: "cheesecakesocial",
+      id: "dessert",
       name: "Cheesecake Social",
       timelocation: "7:30 - 9pm | Friday 9/12 | By Invitation",
       description:
         "Join us for a night of cheesecake and games and learn more about the MCG community, social events, and the work our members do in a casual setting.",
     },
     {
-      id: "caseworkshop",
+      id: "caseprep",
       name: "Case Workshop",
       timelocation: "12:30 - 2pm | Saturday 9/13 | By Invitation",
       description:

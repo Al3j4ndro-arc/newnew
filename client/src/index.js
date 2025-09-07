@@ -13,6 +13,9 @@ import Conflict from "./routes/conflict.js";
 import Logout from "./routes/logout.js";
 import Admin from "./routes/admin.js";
 import Deliberations from "./routes/deliberations.js";
+import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
+import Onboarding from "./routes/onboarding.js";
+import Profile from "./pages/Profile.js";
 
 import "./stylesheets/output.css";
 
@@ -26,9 +29,11 @@ const AppRoutes = () => (
       <Route path="/signup" component={SignUp} />
       <Route path="/application" component={Application} />
       <Route path="/login" component={Login} />
+      <Route path="/onboarding" component={Onboarding} />
       <Route path="/logout" component={Logout} />
       <Route path="/admin" component={Admin} />
       <Route path="/deliberations" component={Deliberations} />
+      <Route path="/profile" component={Profile} />
 
       {/* default route */}
       <Route exact path="/" component={PublicEvents} />
