@@ -35,6 +35,7 @@ app.get("/healthz", (_req, res) => {
 });
 
 // --- maintenance gate ---
+// --- maintenance gate ---
 const PUBLIC_LOCK     = String(process.env.PUBLIC_LOCK || "").toLowerCase() === "on";
 const PREVIEW_KEY     = process.env.PREVIEW_KEY || "";
 const PREVIEW_COOKIE  = "mcg_preview_ok";
@@ -51,6 +52,10 @@ app.use((req, res, next) => {
   if (!PUBLIC_LOCK) return next();
   if (req.path.startsWith("/healthz")) return next();
 
+  // ✅ allow if preview cookie present
+  if (req.cookies?.[PREVIEW_COOKIE] === "yes") return next();
+
+  // or allow with header key
   const hdr = req.get("x-preview-key") || "";
   if (PREVIEW_KEY && hdr === PREVIEW_KEY) return next();
 

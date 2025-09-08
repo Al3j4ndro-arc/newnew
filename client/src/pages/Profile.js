@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 export default function Profile() {
-  const history = useHistory();
   const [classYear, setClassYear] = useState("");
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
+  const history = useHistory();
+  const location = useLocation();
+  const isFirst = new URLSearchParams(location.search).get("first");
 
   useEffect(() => {
     fetch("/api/me", { credentials: "include" })
@@ -34,8 +36,10 @@ export default function Profile() {
       }
       setMsg("Saved!");
       // pull back the value we just saved (and keep /api/me fresh)
-     const me = await fetch("/api/me", { credentials: "include" }).then(r => r.json());
-     setClassYear(me?.data?.classYear || classYear);
+        if (isFirst) {
+          // small delay so the user sees “Saved!” briefly (optional)
+          setTimeout(() => history.push("/events"), 150);
+        }
     } catch (e) {
       setMsg(e.message);
     } finally {
