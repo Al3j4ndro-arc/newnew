@@ -1,23 +1,20 @@
-import React from "react";
-import PublicHeader from "../headers/PublicHeader.js";
+// client/src/components/forms/LoginForm.js
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useState } from "react";
 import validator from "validator";
 import GoogleButton from "../auth/GoogleButton.jsx";
 import { routeAfterAuth } from "../../lib/routeAfterAuth.js";
 
 Object.defineProperty(String.prototype, "capitalize", {
-  value: function () {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-  },
+  value: function () { return this.charAt(0).toUpperCase() + this.slice(1); },
   enumerable: false,
 });
 
-export default function LoginForm({ onSuccess }) {   // ⬅️ accept onSuccess
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const history = useHistory();
+export default function LoginForm({ onSuccess }) {
+  const [email, setEmail]     = useState("");
+  const [password, setPass]   = useState("");
+  const [error, setError]     = useState("");
+  const history               = useHistory();
 
   const submitLogin = async () => {
     if (!validator.isEmail(email)) {
@@ -37,14 +34,10 @@ export default function LoginForm({ onSuccess }) {   // ⬅️ accept onSuccess
         return;
       }
 
-      // Prefer parent’s routing (to /profile?first=1). Fallback to local logic.
+      // ✅ unify with Google flow
       if (onSuccess) return onSuccess();
+      await routeAfterAuth(history);
 
-      // Fallback: decide locally based on /api/me (no cache)
-      const me = await fetch("/api/me", { credentials: "include", cache: "no-store" })
-        .then(r => r.json()).catch(() => ({}));
-      const hasCY = !!(me?.data?.classYear);
-      history.push(hasCY ? "/events" : "/profile?first=1");
     } catch (e) {
       setError(e.message || "network error");
     }
@@ -60,91 +53,40 @@ export default function LoginForm({ onSuccess }) {   // ⬅️ accept onSuccess
             <div className="flex justify-center">
               <GoogleButton
                 text="continue_with"
-                onSuccess={onSuccess ?? (() => history.push("/profile?first=1"))}
+                onSuccess={onSuccess ?? (() => routeAfterAuth(history))}
                 onError={(msg) => setError(msg || "Google login failed")}
               />
             </div>
 
-            {/* keep email/password as fallback (call submitLogin on click) */}
-            {/* ... your inputs ... */}
-            {/* <button onClick={submitLogin}>Login</button> */}
-            {error && <p className="text-red-500">{String(error)}</p>}
+            {/* Email/password fallback */}
+            <div className="space-y-3 pt-4">
+              <input
+                type="email"
+                className="bg-gray-50 border border-gray-300 rounded-lg p-2.5 w-full"
+                placeholder="kerb@mit.edu"
+                value={email}
+                onChange={(e) => { setError(""); setEmail(e.target.value); }}
+              />
+              <input
+                type="password"
+                className="bg-gray-50 border border-gray-300 rounded-lg p-2.5 w-full"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => { setError(""); setPass(e.target.value); }}
+                onKeyUp={(e) => { if (e.key === "Enter") submitLogin(); }}
+              />
+              <button
+                onClick={submitLogin}
+                className="w-full text-white bg-red-700 hover:bg-red-800 rounded-lg text-sm px-5 py-2.5"
+              >
+                Login
+              </button>
+            </div>
+
+            {error && <p className="text-red-500">{error.capitalize()}</p>}
           </div>
         </div>
       </div>
     </div>
   );
 }
-  // return (
-  //   <div className="bg-gray-50">
-  //     <div>
-  //       <PublicHeader />
-  //     </div>
-  //     <div className="flex flex-col items-center justify-center px-6 mx-auto md:h-screen lg:py-0">
-  //       <div className="mb-4 w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 ">
-  //         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-  //           <h1 className="text-xl font-bold text-center leading-tight tracking-tight text-gray-900">
-  //             Login
-  //           </h1>
-  //           <div className="space-y-4 md:space-y-6">
-  //             <div>
-  //               <label className="block mb-2 text-sm font-medium text-gray-900">
-  //                 Your email:{" "}
-  //               </label>
-  //               <input
-  //                 onChange={(e) => {
-  //                   setError("");
-  //                   setEmail(e.target.value);
-  //                 }}
-  //                 type="email"
-  //                 name="email"
-  //                 id="email"
-  //                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-  //                 placeholder="kerb@mit.edu"
-  //                 required=""
-  //               />
-  //             </div>
-  //             <div>
-  //               <label className="block mb-2 text-sm font-medium text-gray-900 ">
-  //                 Password:
-  //               </label>
-  //               <input
-  //                 onChange={(e) => {
-  //                   setError("");
-  //                   setPassword(e.target.value);
-  //                 }}
-  //                 onKeyUp={(e) => {
-  //                   if (e.key === "Enter") {
-  //                     submitLogin();
-  //                   }
-  //                 }}
-  //                 type="password"
-  //                 name="password"
-  //                 id="password"
-  //                 placeholder="••••••••"
-  //                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-  //                 required=""
-  //               />
-  //             </div>
-  //             <button
-  //               onClick={submitLogin}
-  //               className="text-sm h-10 px-5 text-white transition-colors duration-150 bg-red-700 rounded-lg focus:shadow-outline hover:bg-red-800"
-  //             >
-  //               Login
-  //             </button>
-  //             <p className="text-red-500">{error.capitalize()}</p>
-  //             <p className="text-sm font-light text-gray-500 ">
-  //               Don't have an account yet?{" "}
-  //               <a
-  //                 href="/signup"
-  //                 className="font-medium text-primary-600 hover:underline"
-  //               >
-  //                 Sign up
-  //               </a>
-  //             </p>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
