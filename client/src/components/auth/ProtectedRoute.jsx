@@ -7,12 +7,6 @@ export default function ProtectedRoute({ component: Component, ...rest }) {
   const [loading, setLoading] = useState(true);
   const [allow, setAllow] = useState(false);
 
-//   useEffect(() => {
-//     fetch("/api/me", { credentials: "include" })
-//       .then(r => setAllow(r.ok))
-//       .finally(() => setLoading(false));
-//   }, []);
-
   useEffect(() => {
     let alive = true;
     const controller = new AbortController();

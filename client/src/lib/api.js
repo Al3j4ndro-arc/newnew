@@ -1,22 +1,31 @@
-export async function api(path, { method = "GET", body, headers, ...rest } = {}) {
-  const opts = {
-    method,
-    credentials: "include",                 // ← always send cookies
-    headers: { "Content-Type": "application/json", ...(headers || {}) },
-    ...rest,
-  };
-  if (body !== undefined && method !== "GET") {
-    opts.body = typeof body === "string" ? body : JSON.stringify(body);
-  }
-
-  const url = path.startsWith("/api") ? path : `/api${path.startsWith("/") ? "" : "/"}${path}`;
-  const res = await fetch(url, opts);
+export async function api(path, opts = {}) {
+  const res = await fetch(`/api${path.startsWith("/") ? path : `/${path}`}`, {
+    credentials: "include",
+    // allow callers to override/extend (e.g., { cache: "no-store" })
+    ...opts,
+    headers: {
+      "Accept": "application/json",
+      ...(opts.headers || {})
+    }
+  });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || `HTTP ${res.status}`);
+    let msg = "Request failed";
+    try {
+      const data = await res.json();
+      msg = data?.message || msg;
+    } catch { /* no body */ }
+    const err = new Error(msg);
+    err.status = res.status;
+    throw err;
   }
-  return res.json();
+
+  // Gracefully handle 204 No Content
+  if (res.status === 204) return { ok: true };
+
+  // Some endpoints may return empty JSON; guard that
+  const text = await res.text();
+  return text ? JSON.parse(text) : {};
 }
 
 export async function routeAfterAuth(history) {

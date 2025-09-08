@@ -33,31 +33,48 @@ export default function Profile() {
     return () => { alive = false; };
   }, [history, isFirst]);
 
+   // ⬇️ Add THIS dev helper effect here
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return; // optional safety
+    window._go = (p = "/events") => { console.debug("nav->", p); history.replace(p); };
+    return () => { delete window._go; };
+  }, [history]);
+
   async function save(e) {
-    e?.preventDefault?.();
-    setMsg("");
+  e?.preventDefault?.();
+  setMsg("");
 
-    if (!/^\d{4}$/.test(classYear)) {
-      setMsg("Please enter a 4-digit year (e.g., 2027).");
-      return;
-    }
-
-    setSaving(true);
-    try {
-      await api("/me/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ classYear }),
-      });
-      setMsg("Saved!");
-      // Always proceed to events after saving the class year
-      setTimeout(() => history.push("/events"), 100);
-    } catch (err) {
-      setMsg(err?.message || "Failed to save");
-    } finally {
-      setSaving(false);
-    }
+  if (!/^\d{4}$/.test(classYear)) {
+    setMsg("Please enter a 4-digit year (e.g., 2027).");
+    return;
   }
+
+  setSaving(true);
+  try {
+    // 1) persist
+    await api("/me/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ classYear }),
+    });
+
+    // 2) refresh /me with no cache (so any guards won’t read stale data)
+    await fetch("/api/me", {
+      credentials: "include",
+      cache: "no-store",
+      headers: { "Cache-Control": "no-store" },
+    });
+
+    // 3) go to events (replace avoids lingering /profile?first=1 in history)
+    setMsg("Saved!");
+    console.debug("[profile] navigating to /events");
+    setTimeout(() => history.replace("/events"), 120);
+  } catch (err) {
+    setMsg(err?.message || "Failed to save");
+  } finally {
+    setSaving(false);
+  }
+}
 
   return (
     <form onSubmit={save} className="space-y-4 md:space-y-6">

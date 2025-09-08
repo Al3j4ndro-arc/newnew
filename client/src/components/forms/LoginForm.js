@@ -13,11 +13,10 @@ Object.defineProperty(String.prototype, "capitalize", {
   enumerable: false,
 });
 
-export default function LoginForm() {
+export default function LoginForm({ onSuccess }) {   // ⬅️ accept onSuccess
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
   const history = useHistory();
 
   const submitLogin = async () => {
@@ -25,52 +24,57 @@ export default function LoginForm() {
       setError("please enter a valid email");
       return;
     }
-
-    const url = "/api/auth/login";
-    const data = { email, password };
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(data),
-    };
-
     try {
-      const res = await fetch(url, options);
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         setError(err.message || "login failed");
         return;
       }
-      // logged in → decide next route based on /api/me
-      const me = await fetch("/api/me", { credentials: "include" }).then(r => r.json());
-      const hasCY = !!me?.data?.classYear;
+
+      // Prefer parent’s routing (to /profile?first=1). Fallback to local logic.
+      if (onSuccess) return onSuccess();
+
+      // Fallback: decide locally based on /api/me (no cache)
+      const me = await fetch("/api/me", { credentials: "include", cache: "no-store" })
+        .then(r => r.json()).catch(() => ({}));
+      const hasCY = !!(me?.data?.classYear);
       history.push(hasCY ? "/events" : "/profile?first=1");
     } catch (e) {
       setError(e.message || "network error");
     }
   };
-     return (
-      <div className="bg-gray-50">
-        {/* ... header ... */}
-        <div className="flex flex-col items-center justify-center px-6 mx-auto md:h-screen lg:py-0">
-          <div className="mb-4 w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 ">
-            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold text-center text-gray-900">Login</h1>
 
-              <div className="flex justify-center">
-                <GoogleButton text="continue_with" />
-              </div>
+  return (
+    <div className="bg-gray-50">
+      <div className="flex flex-col items-center justify-center px-6 mx-auto md:h-screen lg:py-0">
+        <div className="mb-4 w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
+          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <h1 className="text-xl font-bold text-center text-gray-900">Login</h1>
 
-              {/* Optional: keep email/password below as a fallback */}
-              {/* ... your existing fields/buttons ... */}
+            <div className="flex justify-center">
+              <GoogleButton
+                text="continue_with"
+                onSuccess={onSuccess ?? (() => history.push("/profile?first=1"))}
+                onError={(msg) => setError(msg || "Google login failed")}
+              />
             </div>
+
+            {/* keep email/password as fallback (call submitLogin on click) */}
+            {/* ... your inputs ... */}
+            {/* <button onClick={submitLogin}>Login</button> */}
+            {error && <p className="text-red-500">{String(error)}</p>}
           </div>
         </div>
       </div>
-    );
+    </div>
+  );
+}
   // return (
   //   <div className="bg-gray-50">
   //     <div>
@@ -144,4 +148,3 @@ export default function LoginForm() {
   //     </div>
   //   </div>
   // );
-}
