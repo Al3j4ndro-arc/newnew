@@ -14,6 +14,7 @@ router.post("/event-signin", verifyToken, async (req, res) => {
     const rawId = (req.body?.eventName || "").trim();
     const id = ID_ALIAS[rawId] || rawId;
     const { eventCode } = req.body || {};
+    console.log("[event-signin] body", req.body);
 
     if (!id || !eventCode) {
       return res.status(400).json({ message: "missing required fields" });

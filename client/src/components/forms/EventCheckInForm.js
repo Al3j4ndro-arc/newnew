@@ -14,24 +14,33 @@ export default function EventCheckInForm({ event }) {
   const history = useHistory();
 
   const sendCheckInCode = async () => {
-    if (!checkInCode) return;
-    if (!validator.isAlphanumeric(checkInCode)) {
-      setWrongCode(true);
-      return;
-    }
+  const name = String(id || "").trim().toLowerCase();            // normalize
+  const code = String(checkInCode || "").trim().toLowerCase();
 
-    try {
-      await api("/events/event-signin", {
-        method: "POST",
-        body: { eventName: id, eventCode: checkInCode },
-      });
-      setCorrectCode(true);
-      setWrongCode(false);
-      setCheckInCode("Checked In");
-    } catch {
-      setWrongCode(true);
-    }
-  };
+  if (!code) return;
+
+  // optional: allow letters/numbers/_/-
+  if (!/^[a-z0-9_-]+$/i.test(code)) {
+    setWrongCode(true);
+    return;
+  }
+
+  try {
+    await api("/events/event-signin", {
+      method: "POST",
+      // If your api() helper does NOT stringify+set headers, use the next 2 lines:
+      // headers: { "Content-Type": "application/json" },
+      // body: JSON.stringify({ eventName: name, eventCode: code }),
+      body: { eventName: name, eventCode: code },                 // if api() stringifies
+    });
+
+    setCorrectCode(true);
+    setWrongCode(false);
+    setCheckInCode("Checked In");
+  } catch {
+    setWrongCode(true);
+  }
+};
 
   useEffect(() => {
     let alive = true;
