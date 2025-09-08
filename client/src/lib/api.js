@@ -1,29 +1,36 @@
 export async function api(path, opts = {}) {
-  const res = await fetch(`/api${path.startsWith("/") ? path : `/${path}`}`, {
+  const url = "/api" + (path.startsWith("/") ? path : `/${path}`);
+
+  const headers = { Accept: "application/json", ...(opts.headers || {}) };
+
+  let body = opts.body;
+  const isForm =
+    typeof FormData !== "undefined" && body instanceof FormData;
+  const isBlob =
+    typeof Blob !== "undefined" && body instanceof Blob;
+
+  // ✅ stringify plain objects and set Content-Type
+  if (body && typeof body !== "string" && !isForm && !isBlob) {
+    body = JSON.stringify(body);
+    if (!headers["Content-Type"]) headers["Content-Type"] = "application/json";
+  }
+
+  const res = await fetch(url, {
     credentials: "include",
-    // allow callers to override/extend (e.g., { cache: "no-store" })
     ...opts,
-    headers: {
-      "Accept": "application/json",
-      ...(opts.headers || {})
-    }
+    headers,
+    body,
   });
 
   if (!res.ok) {
     let msg = "Request failed";
-    try {
-      const data = await res.json();
-      msg = data?.message || msg;
-    } catch { /* no body */ }
+    try { msg = (await res.json()).message || msg; } catch {}
     const err = new Error(msg);
     err.status = res.status;
     throw err;
   }
 
-  // Gracefully handle 204 No Content
   if (res.status === 204) return { ok: true };
-
-  // Some endpoints may return empty JSON; guard that
   const text = await res.text();
   return text ? JSON.parse(text) : {};
 }

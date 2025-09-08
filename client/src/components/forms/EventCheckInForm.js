@@ -29,9 +29,9 @@ export default function EventCheckInForm({ event }) {
     await api("/events/event-signin", {
       method: "POST",
       // If your api() helper does NOT stringify+set headers, use the next 2 lines:
-      // headers: { "Content-Type": "application/json" },
-      // body: JSON.stringify({ eventName: name, eventCode: code }),
-      body: { eventName: name, eventCode: code },                 // if api() stringifies
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ eventName: name, eventCode: code }),
+      // body: { eventName: name, eventCode: code },                 // if api() stringifies
     });
 
     setCorrectCode(true);
